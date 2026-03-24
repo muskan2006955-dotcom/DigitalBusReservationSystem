@@ -1,0 +1,138 @@
+﻿@model IEnumerable<BusReservationSystem.Models.Booking>
+
+@{
+    ViewData["Title"] = "Cancelled Bookings Audit";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid px-4 mt-4">
+    <div class="card shadow-sm border-0" style="border-radius: 12px;">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="mb-0 fw-bold text-danger">
+                    <i class="fas fa-history me-2"></i>Cancellation History
+                </h4>
+                <small class="text-muted">Global log of all refunds and cancelled tickets</small>
+            </div>
+            <div class="badge bg-danger rounded-pill px-3 py-2">
+                Total Logs: @Model.Count()
+            </div>
+        </div>
+
+        <div class="card-body bg-light border-bottom mb-3">
+            <form method="get" asp-action="CancelledIndex" id="filterForm">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-5">
+                        <label class="form-label small fw-bold text-muted">Search Records</label>
+                        <div class="input-group shadow-sm">
+                            <span class="input-group-text bg-white border-end-0">
+                                <i class="fas fa-search text-muted"></i>
+                            </span>
+                            <input type="text" name="searchTerm" class="form-control border-start-0"
+                                   placeholder="Customer, Phone or Agent Name..."
+                                   value="@Context.Request.Query["searchTerm"]">
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label small fw-bold text-muted">Cancellation Date</label>
+                        <div class="input-group shadow-sm">
+                            <span class="input-group-text bg-white border-end-0">
+                                <i class="fas fa-calendar-alt text-muted"></i>
+                            </span>
+                            <input type="date" name="cancelDate" class="form-control border-start-0"
+                                   value="@Context.Request.Query["cancelDate"]">
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-grow-1 shadow-sm">
+                            <i class="fas fa-filter me-1"></i> Apply Filter
+                        </button>
+
+                        @* Reset Button: Ye wapas CancelledIndex par bhej dega baghair parameters ke *@
+                        <a asp-action="CancelledIndex" class="btn btn-outline-secondary shadow-sm px-3" title="Clear All Filters">
+                            <i class="fas fa-undo"></i> Reset
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle border">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">ID</th>
+                            <th>Customer Details</th>
+                            <th>Bus / Seat</th>
+                            <th>Booked By (Agent)</th>
+                            <th>Cancelled On</th>
+                            <th class="text-end">Refund Amount</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center py-5 text-muted italic">
+                                    <i class="fas fa-folder-open d-block mb-2 fs-2"></i>
+                                    No cancellation records found matching your filters.
+                                </td>
+                            </tr>
+                        }
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-3 fw-bold">#@item.BookingId</td>
+                                <td>
+                                    <div class="fw-bold">@item.Customer?.CustomerName</div>
+                                    <small class="text-muted">@item.Customer?.IdproofNumber</small>
+                                </td>
+                                <td>
+                                    <div class="small">@item.Bus?.BusCode</div>
+                                    <span class="badge bg-outline-dark border text-dark" style="font-size: 10px;">Seat: @item.SeatNumber</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info text-dark bg-opacity-10 px-2 py-1">
+                                        <i class="fas fa-user-tie me-1"></i> @item.BookedByNavigation?.FirstName
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="small fw-bold">@item.CancellationDate?.ToString("dd MMM yyyy")</div>
+                                    <small class="text-muted">@item.CancellationDate?.ToString("hh:mm tt")</small>
+                                </td>
+                                <td class="text-end fw-bold text-success">
+                                    @item.RefundAmount?.ToString("C")
+                                </td>
+                                <td class="text-center">
+                                    <a asp-action="Details" asp-route-id="@item.BookingId" class="btn btn-sm btn-outline-primary shadow-sm px-3">
+                                        View Details
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+<style>
+    .bg-outline-dark {
+        background-color: transparent;
+        border: 1px solid #dee2e6;
+    }
+
+    .table thead th {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .table tbody td {
+        font-size: 14px;
+    }
+</style>

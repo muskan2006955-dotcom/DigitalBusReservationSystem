@@ -1,0 +1,310 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - Employee Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <style>
+        body {
+            background-color: #f3f4f6;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+        }
+
+        /* --- Sidebar Main Container --- */
+        .sidebar {
+            height: 100vh;
+            background-color: #005555; /* Base Teal Theme */
+            color: white;
+            position: fixed;
+            width: 240px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.2) #005555;
+        }
+
+        /* Sidebar Brand / Logo Area */
+        .sidebar-brand {
+            padding: 25px 20px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            background: #004444; /* Darker shade for contrast */
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #ffffff;
+        }
+
+        /* Main Navigation Links */
+        .nav-link-custom {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent; /* Hidden border for alignment */
+        }
+
+            .nav-link-custom:hover {
+                color: white;
+                background: rgba(255, 255, 255, 0.1);
+            }
+
+        /* --- Active Page Highlight (Matching Theme) --- */
+        .active-page {
+            background-color: #003333 !important; /* Deep Teal for active state */
+            color: white !important;
+            font-weight: 700;
+            border-left: 4px solid #10a37f !important; /* Elegant Greenish Highlight */
+        }
+
+        /* Submenu Container */
+        .submenu {
+            display: block; /* Default open; JavaScript handles toggle */
+            background: #004d4d;
+            padding-bottom: 5px;
+        }
+
+            /* Submenu Individual Links */
+            .submenu a {
+                padding: 8px 25px 8px 45px;
+                font-size: 13px;
+                color: rgba(255, 255, 255, 0.7);
+                display: block;
+                text-decoration: none;
+                transition: 0.2s;
+            }
+
+                .submenu a:hover {
+                    color: white;
+                    background: #006666;
+                    padding-left: 50px;
+                }
+
+        /* --- Topbar & Content --- */
+        .content {
+            margin-left: 240px;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            background-color: #ffffff;
+            padding: 10px 25px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        /* Logout Button Styling */
+        .logout-btn-header {
+            background: #fff5f5;
+            color: #ef4444;
+            padding: 6px 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            border: 1px solid #fee2e2;
+            transition: 0.3s;
+        }
+
+            .logout-btn-header:hover {
+                background: #ef4444;
+                color: white;
+            }
+
+        /* --- Galaxy AI Button (Matching Theme) --- */
+        .galaxy-ai-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            background: #ffffff;
+            border: 1px solid #005555;
+            border-radius: 12px;
+            color: #005555 !important;
+            text-decoration: none !important;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+            .galaxy-ai-btn:hover {
+                transform: translateY(-2px);
+                background: #005555;
+                color: #fff !important;
+                box-shadow: 0 4px 15px rgba(0,85,85,0.2);
+            }
+
+        /* AI Icon & Pulse Animation */
+        .ai-icon-container {
+            position: relative;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .online-dot {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 7px;
+            height: 7px;
+            background-color: #10a37f;
+            border-radius: 50%;
+            border: 1px solid #fff;
+            animation: pulse-green 2s infinite;
+        }
+
+        @@keyframes pulse-green {
+            0%
+
+        {
+            box-shadow: 0 0 0 0 rgba(16, 163, 127, 0.7);
+        }
+
+        70% {
+            box-shadow: 0 0 0 6px rgba(16, 163, 127, 0);
+        }
+
+        100% {
+            box-shadow: 0 0 0 0 rgba(16, 163, 127, 0);
+        }
+
+        }
+
+        /* Sidebar Custom Scrollbar for Chrome/Safari */
+        .sidebar::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: #005555;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+        }
+
+        /* Rotation for Chevron Icon */
+        .rotate-icon {
+            transform: rotate(-180deg);
+        }
+
+        .fa-chevron-down {
+            transition: transform 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-brand">Employee Panel</div>
+
+        <a class="nav-link-custom" asp-controller="Home" asp-action="EmployeeDashboard">
+            <span>Dashboard</span>
+        </a>
+
+        <div class="menu-item">
+            <div class="nav-link-custom toggle-btn">
+                <span>Customer Mgmt</span>
+                <i class="fa fa-chevron-down small"></i>
+            </div>
+            <div class="submenu">
+                <a asp-controller="Customer" asp-action="Create">Add Customer</a>
+                <a asp-controller="Customer" asp-action="Index">Manage Customer</a>
+            </div>
+        </div>
+
+        <div class="menu-item">
+            <div class="nav-link-custom toggle-btn">
+                <span>Booking Mgmt</span>
+                <i class="fa fa-chevron-down small"></i>
+            </div>
+            <div class="submenu">
+                <a asp-controller="Booking" asp-action="Create">Add Booking</a>
+                <a asp-controller="Booking" asp-action="BookedCustomers">Manage Bookings</a>
+                <a asp-controller="Booking" asp-action="CancelledIndex">View Cancellations</a>
+            </div>
+        </div>
+
+        <div class="menu-item">
+            <div class="nav-link-custom toggle-btn">
+                <span>Reports & Security</span>
+                <i class="fa fa-chevron-down small"></i>
+            </div>
+            <div class="submenu">
+                <a asp-controller="Reports" asp-action="Index">Selling Report</a>
+                <a asp-controller="EmployeeProfile" asp-action="Index">My Profile</a>
+                <a asp-controller="EmployeeProfile" asp-action="ChangePassword">Security</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="topbar shadow-sm">
+            <h5 class="m-0 fw-bold text-dark">@ViewData["Title"]</h5>
+
+            <div class="header-right">
+                <span class="text-muted small">
+                    <i class="fa fa-user-circle me-1"></i>
+                    Welcome, <b>@Context.Session.GetString("Username")</b>
+                </span>
+                <a asp-controller="Login" asp-action="Logout" class="logout-btn-header">
+                    <i class="fa fa-sign-out-alt me-1"></i> Logout
+                </a>
+                <a asp-controller="EmployeeChatBot" asp-action="Index" class="galaxy-ai-btn">
+                    <span class="ai-icon-container">
+                        <i class="fas fa-robot"></i>
+                        <span class="online-dot"></span>
+                    </span>
+                    <span class="btn-text">Galaxy AI</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="p-4">
+            @RenderBody()
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Sidebar Toggle
+            $('.toggle-btn').click(function () {
+                $(this).next('.submenu').slideToggle(200);
+            });
+
+            // Active Page Highlighting Logic
+            var currentPath = window.location.pathname;
+            $('.sidebar a').each(function () {
+                var href = $(this).attr('href');
+                if (currentPath === href) {
+                    $(this).addClass('active-page');
+                }
+            });
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,183 @@
+﻿@model BusReservationSystem.Models.EmployeeDashboardViewModel
+
+@{
+    ViewData["Title"] = "Employee Dashboard";
+    Layout = "~/Views/Shared/_EmployeeLayout.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+<style>
+    :root {
+        --primary: #4e73df;
+        --success: #1cc88a;
+        --info: #36b9cc;
+        --warning: #f6c23e;
+    }
+
+    .dash-card {
+        border: none;
+        border-radius: 15px;
+        transition: transform 0.3s ease;
+        color: white;
+    }
+
+        .dash-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .bg-gradient-blue {
+        background: linear-gradient(45deg, #4e73df, #224abe);
+    }
+
+    .bg-gradient-green {
+        background: linear-gradient(45deg, #1cc88a, #13855c);
+    }
+
+    .bg-gradient-info {
+        background: linear-gradient(45deg, #36b9cc, #258391);
+    }
+
+    .bg-gradient-orange {
+        background: linear-gradient(45deg, #f6c23e, #dda20a);
+    }
+
+    .table-card {
+        border-radius: 15px;
+        border: none;
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+    }
+
+    .status-badge {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: bold;
+    }
+</style>
+
+<div class="container-fluid px-4 mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold text-dark">Welcome back, @Model.EmployeeName! 👋</h3>
+            <p class="text-muted">Here is what's happening with your bookings today.</p>
+        </div>
+        <div class="text-end">
+            <span class="badge bg-primary px-3 py-2">System Time: @DateTime.Now.ToString("HH:mm")</span>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card dash-card bg-gradient-blue h-100 shadow">
+                <div class="card-body d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="text-white-50 small text-uppercase fw-bold">My Customers</div>
+                        <div class="h3 fw-bold mb-0">@Model.TotalMyCustomers</div>
+                    </div>
+                    <i class="fa fa-users fa-2x text-white-50"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card dash-card bg-gradient-green h-100 shadow">
+                <div class="card-body d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="text-white-50 small text-uppercase fw-bold">Total Bookings</div>
+                        <div class="h3 fw-bold mb-0">@Model.TotalMyBookings</div>
+                    </div>
+                    <i class="fa fa-ticket-alt fa-2x text-white-50"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card dash-card bg-gradient-info h-100 shadow">
+                <div class="card-body d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="text-white-50 small text-uppercase fw-bold">Total Earnings</div>
+                        <div class="h3 fw-bold mb-0">Rs. @Model.TotalMyEarnings.ToString("N2")</div>
+                    </div>
+                    <i class="fa fa-wallet fa-2x text-white-50"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card dash-card bg-gradient-orange h-100 shadow">
+                <div class="card-body d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="text-white-50 small text-uppercase fw-bold">Active Buses</div>
+                        <div class="h3 fw-bold mb-0">@Model.TotalBusesAvailable</div>
+                    </div>
+                    <i class="fa fa-bus fa-2x text-white-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-lg-8 mb-4">
+            <div class="card table-card h-100">
+                <div class="card-header bg-white border-0 py-3 d-flex justify-content-between">
+                    <h6 class="m-0 fw-bold text-primary">Recent Bookings</h6>
+                    <a asp-controller="Booking" asp-action="Index" class="btn btn-sm btn-outline-primary rounded-pill">View All</a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th>Customer</th>
+                                    <th>Bus #</th>
+                                    <th>Seat</th>
+                                    <th>Fare</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var b in Model.RecentBookings)
+                                {
+                                    <tr>
+                                        <td class="fw-bold">@b.Customer.CustomerName</td>
+                                        <td>@b.Bus.BusNumber</td>
+                                        <td><span class="badge bg-secondary">@b.SeatNumber</span></td>
+                                        <td class="text-success fw-bold">Rs. @b.FinalAmount</td>
+                                        <td><span class="status-badge bg-success text-white">Booked</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 mb-4">
+            <div class="card table-card h-100">
+                <div class="card-header bg-white border-0 py-3">
+                    <h6 class="m-0 fw-bold text-success">Latest Customers</h6>
+                </div>
+                <div class="card-body">
+                    @foreach (var c in Model.RecentCustomers)
+                    {
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="rounded-circle bg-light p-2 me-3">
+                                <i class="fa fa-user text-success"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="small fw-bold">@c.CustomerName</div>
+                                <div class="text-muted small">@c.PhoneNumber</div>
+                            </div>
+                            <div class="text-end">
+                                <span class="small text-muted">@c.CreatedDate?.ToString("MMM dd")</span>
+                            </div>
+                        </div>
+                    }
+                    <hr />
+                    <a asp-controller="Customer" asp-action="Create" class="btn btn-success w-100 rounded-pill shadow-sm">
+                        <i class="fa fa-plus me-1"></i> Add New Customer
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

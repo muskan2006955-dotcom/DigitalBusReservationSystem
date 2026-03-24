@@ -1,0 +1,156 @@
+﻿@model BusReservationSystem.Models.Booking
+
+@{
+    ViewData["Title"] = "Booking Details";
+    Layout = "~/Views/Shared/_EmployeeLayout.cshtml";
+}
+
+<style>
+    .ticket-container {
+        background: white;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        max-width: 800px;
+        margin: auto;
+        border-top: 10px solid #3498db;
+    }
+
+    .ticket-header {
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 2px dashed #ddd;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+    }
+
+    .info-label {
+        font-size: 12px;
+        color: #7f8c8d;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+
+    .info-value {
+        font-size: 16px;
+        color: #2c3e50;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .fare-table {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    .total-row {
+        font-size: 20px;
+        color: #27ae60;
+        font-weight: 800;
+        border-top: 2px solid #ddd;
+        padding-top: 10px;
+    }
+
+    .action-row {
+        margin-top: 30px;
+        text-align: center;
+    }
+
+    /* Printing Logic */
+    @@media print {
+        .no-print
+
+    {
+        display: none;
+    }
+
+    .ticket-container {
+        box-shadow: none;
+        border: 1px solid #000;
+    }
+
+    }
+</style>
+
+<div class="page-header no-print">
+    <h2 class="text-center">Booking Confirmation</h2>
+</div>
+
+<div class="ticket-container" id="printableTicket">
+    <div class="ticket-header">
+        <div>
+            <h3 style="color:#3498db; margin:0;">SRC TRAVELS</h3>
+            <small>Booking ID: #@Model.BookingId</small>
+        </div>
+        <div class="text-right">
+            <p class="info-label">Status</p>
+            <span class="badge @(Model.BookingStatus == "Booked" ? "bg-success" : "bg-warning") text-white" style="padding: 5px 15px;">
+                @Model.BookingStatus
+            </span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <p class="info-label">Passenger Name</p>
+            <p class="info-value">@Model.Customer?.CustomerName</p>
+
+            <p class="info-label">Bus Number / Type</p>
+            <p class="info-value">@Model.Bus?.BusNumber (@Model.Bus?.BusType)</p>
+
+            <p class="info-label">Seat Number</p>
+            <p class="info-value" style="font-size: 24px; color: #e67e22;">@Model.SeatNumber</p>
+        </div>
+        <div class="col-md-6 text-md-right">
+            <p class="info-label">Travel Date</p>
+            <p class="info-value">@Model.TravelDate.ToString("dddd, dd MMMM yyyy")</p>
+
+            <p class="info-label">Route</p>
+            <p class="info-value">@Model.StartingPoint <i class="fa fa-arrow-right"></i> @Model.DestinationPoint</p>
+
+            <p class="info-label">Booked By</p>
+            <p class="info-value">
+                @if (Model.BookedByNavigation != null)
+                {
+                    @($"{Model.BookedByNavigation.FirstName} {Model.BookedByNavigation.LastName}")
+                }
+                else
+                {
+                    <span>System Generated</span>
+                }
+            </p>
+        </div>
+    </div>
+
+    <div class="fare-table mt-4">
+        <div class="d-flex justify-content-between mb-2">
+            <span>Base Fare:</span>
+            <span>Rs. @Model.BaseFare</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+            <span>Discount:</span>
+            <span class="text-danger">- Rs. @Model.DiscountAmount</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+            <span>Tax Amount:</span>
+            <span>+ Rs. @Model.TaxAmount</span>
+        </div>
+        <div class="d-flex justify-content-between total-row">
+            <span>TOTAL AMOUNT:</span>
+            <span>Rs. @Model.FinalAmount</span>
+        </div>
+    </div>
+</div>
+
+<div class="action-row no-print">
+    <button onclick="window.print()" class="btn btn-primary btn-lg px-5 mr-2">
+        <i class="fa fa-print"></i> Print Ticket
+    </button>
+    <a asp-action="Edit" asp-route-id="@Model.BookingId" class="btn btn-warning btn-lg px-5 mr-2">
+        <i class="fa fa-edit"></i> Edit
+    </a>
+    <a asp-action="Index" class="btn btn-secondary btn-lg px-5">
+        <i class="fa fa-list"></i> Back to List
+    </a>
+</div>

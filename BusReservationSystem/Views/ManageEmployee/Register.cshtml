@@ -1,0 +1,165 @@
+﻿@model BusReservationSystem.Models.Employee
+
+@{
+    ViewData["Title"] = "Register New Employee";
+    Layout = "~/Views/Shared/_EmployeeLayout.cshtml"; // Aap apna Admin ya Main Layout bhi use kar saktay hain
+}
+
+<style>
+    :root {
+        --main-color: #005555;
+    }
+
+    .text-teal {
+        color: var(--main-color) !important;
+    }
+
+    .bg-teal {
+        background-color: var(--main-color) !important;
+    }
+
+    .card {
+        border: none;
+        border-radius: 15px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+        padding: 10px 15px;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--main-color);
+            box-shadow: 0 0 0 0.2rem rgba(0, 85, 85, 0.1);
+        }
+
+    .label-custom {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #6c757d;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+    }
+
+    .btn-teal {
+        background-color: var(--main-color) !important;
+        color: white !important;
+        border: none;
+        border-radius: 10px;
+        padding: 12px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+        .btn-teal:hover {
+            background-color: #004444 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+</style>
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-lg">
+                <div class="card-header bg-white border-0 pt-4 px-4">
+                    <h3 class="fw-bold text-teal mb-0">
+                        <i class="fas fa-user-plus me-2"></i>Employee Registration
+                    </h3>
+                    <p class="text-muted small">Fill in the details to create a new employee account.</p>
+                </div>
+
+                <div class="card-body p-4">
+                    <form asp-action="Register" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-12">
+                                <h6 class="text-dark fw-bold border-bottom pb-2 mb-3">Personal Details</h6>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="label-custom">First Name</label>
+                                <input asp-for="FirstName" class="form-control" placeholder="e.g. Sami" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="label-custom">Last Name</label>
+                                <input asp-for="LastName" class="form-control" placeholder="e.g. Khan" />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="label-custom">Gender</label>
+                                <select asp-for="Gender" class="form-select">
+                                    <option value="">Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="label-custom">Age</label>
+                                <input asp-for="Age" type="number" class="form-control" placeholder="Age" />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="label-custom">Qualification</label>
+                                <input asp-for="Qualification" class="form-control" placeholder="e.g. BSCS" />
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-12">
+                                <h6 class="text-dark fw-bold border-bottom pb-2 mb-3">Contact Information</h6>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="label-custom">Phone Number</label>
+                                <input asp-for="PhoneNumber" class="form-control" placeholder="03xx-xxxxxxx" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="label-custom">Email Address</label>
+                                <input asp-for="Email" type="email" class="form-control" placeholder="email@example.com" />
+                            </div>
+                            <div class="col-md-8">
+                                <label class="label-custom">Residential Address</label>
+                                <input asp-for="Address" class="form-control" placeholder="Complete address..." />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="label-custom">Branch Location</label>
+                                <input asp-for="BranchLocation" class="form-control" placeholder="City / Branch" />
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-12">
+                                <h6 class="text-dark fw-bold border-bottom pb-2 mb-3">Account Security</h6>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="label-custom">Username</label>
+                                <input asp-for="Username" class="form-control" placeholder="Unique username" required />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="label-custom">Password</label>
+                                <input asp-for="Password" type="password" class="form-control" placeholder="Password" required />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="label-custom">Account Role</label>
+                                <select asp-for="Role" class="form-select">
+                                    <option value="Employee">Employee</option>
+                                    <option value="Admin">Admin</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <input type="hidden" asp-for="Status" value="Active" />
+                        <input type="hidden" asp-for="CreatedDate" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+
+                        <div class="text-center mt-5">
+                            <button type="submit" class="btn btn-teal px-5 shadow">
+                                <i class="fas fa-save me-2"></i> REGISTER EMPLOYEE
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

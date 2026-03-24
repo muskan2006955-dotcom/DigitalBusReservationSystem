@@ -1,0 +1,154 @@
+﻿@model BusReservationSystem.Models.Employee
+
+@{
+    ViewData["Title"] = "My Profile";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    // Initials Logic
+    var firstLetter = !string.IsNullOrEmpty(Model.FirstName) ? Model.FirstName[0].ToString().ToUpper() : "U";
+    var lastLetter = !string.IsNullOrEmpty(Model.LastName) ? Model.LastName[0].ToString().ToUpper() : "";
+    var initials = firstLetter + lastLetter;
+}
+
+<style>
+    :root {
+        --main-color: #005555;
+    }
+
+    .text-teal {
+        color: var(--main-color) !important;
+    }
+
+    .bg-teal {
+        background-color: var(--main-color) !important;
+    }
+
+    /* Initials Circle */
+    .profile-initials {
+        width: 120px;
+        height: 120px;
+        background-color: var(--main-color);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.8rem;
+        font-weight: bold;
+        margin: 0 auto;
+        border: 4px solid #fff;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .btn-teal {
+        background-color: var(--main-color) !important;
+        color: white !important;
+        border-radius: 10px;
+        transition: 0.3s;
+    }
+
+        .btn-teal:hover {
+            background-color: #004444 !important;
+            transform: translateY(-2px);
+        }
+
+    .btn-outline-teal {
+        border: 2px solid var(--main-color) !important;
+        color: var(--main-color) !important;
+        font-weight: 600;
+        border-radius: 10px;
+    }
+
+        .btn-outline-teal:hover {
+            background-color: var(--main-color) !important;
+            color: white !important;
+        }
+
+    .card {
+        border: none;
+        border-radius: 15px;
+    }
+
+    .form-label {
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+</style>
+
+<div class="container-fluid px-4 mt-5">
+    <div class="row">
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow mb-4">
+                <div class="card-body text-center pt-5 pb-4">
+                    <div class="profile-initials rounded-circle mb-3">
+                        @initials
+                    </div>
+
+                    <h4 class="fw-bold mb-1">@Model.FirstName @Model.LastName</h4>
+                    <p class="text-muted small mb-3">@Model.Role</p>
+
+                    <div class="d-grid gap-2 px-4 mt-4">
+                        <a asp-action="Security" asp-controller="AdminProfile" class="btn btn-outline-teal py-2">
+                            <i class="fas fa-shield-alt me-2"></i> Account Security
+                        </a>
+                        <p class="text-muted x-small mt-2" style="font-size: 0.7rem;">Manage your password and login settings</p>
+                    </div>
+
+                    <hr class="my-4 opacity-25">
+                    <div class="text-start small px-3">
+                        <div class="mb-2"><i class="fas fa-envelope me-2 text-teal"></i> @Model.Email</div>
+                        <div><i class="fas fa-calendar-check me-2 text-teal"></i> Joined: @Model.CreatedDate?.ToString("MMMM yyyy")</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-8 col-lg-7">
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success border-0 shadow-sm rounded-3">
+                    <i class="fas fa-check-circle me-2"></i> @TempData["Success"]
+                </div>
+            }
+
+            <div class="card shadow">
+                <div class="card-header bg-white border-0 py-4">
+                    <h5 class="m-0 fw-bold text-teal"><i class="fas fa-user-edit me-2"></i>Personal Information</h5>
+                </div>
+                <div class="card-body p-4 pt-0">
+                    <form asp-action="UpdateInfo" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="EmployeeId" />
+
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-muted">FIRST NAME</label>
+                                <input asp-for="FirstName" class="form-control bg-light border-0 py-2" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-muted">LAST NAME</label>
+                                <input asp-for="LastName" class="form-control bg-light border-0 py-2" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-muted">PHONE NUMBER</label>
+                                <input asp-for="PhoneNumber" class="form-control bg-light border-0 py-2" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-muted">AGE</label>
+                                <input asp-for="Age" type="number" class="form-control bg-light border-0 py-2" />
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label fw-bold text-muted">RESIDENTIAL ADDRESS</label>
+                                <textarea asp-for="Address" class="form-control bg-light border-0" rows="3"></textarea>
+                            </div>
+                            <div class="col-12 text-end mt-4">
+                                <button type="submit" class="btn btn-teal px-5 py-2 fw-bold shadow-sm">
+                                    UPDATE PROFILE
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

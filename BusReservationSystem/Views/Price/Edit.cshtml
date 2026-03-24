@@ -1,0 +1,91 @@
+﻿@model BusReservationSystem.Models.PriceList
+
+@{
+    ViewData["Title"] = "Edit Price";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml"; // agar aap dashboard layout use kar rahi ho
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+    .edit-container {
+        max-width: 700px;
+        margin: 40px auto;
+        padding: 25px 30px;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+        .edit-container h1 {
+            margin-bottom: 25px;
+            color: #2c3e50;
+        }
+
+    .form-label {
+        font-weight: 600;
+        color: #34495e;
+    }
+
+    .btn-group {
+        margin-top: 25px;
+    }
+
+    .btn-save {
+        background-color: #3498db;
+        color: white;
+        transition: 0.3s;
+    }
+
+        .btn-save:hover {
+            background-color: #2980b9;
+        }
+
+    .btn-back {
+        background-color: #95a5a6;
+        color: white;
+        transition: 0.3s;
+        margin-left: 10px;
+    }
+
+        .btn-back:hover {
+            background-color: #7f8c8d;
+        }
+</style>
+
+<div class="edit-container">
+    <h1>Edit Price</h1>
+
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="PriceId" />
+
+        <div class="mb-3">
+            <label class="form-label">Bus Type</label>
+            <input class="form-control" asp-for="BusType" readonly />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Price Per Km</label>
+            <input class="form-control" asp-for="PricePerKm" type="number" step="0.01" min="0" required />
+            <span asp-validation-for="PricePerKm" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Tax (%)</label>
+            <input class="form-control" asp-for="TaxPercentage" type="number" step="0.01" min="0" required />
+            <span asp-validation-for="TaxPercentage" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Effective Date</label>
+            <input class="form-control" asp-for="EffectiveDate" type="date" required />
+            <span asp-validation-for="EffectiveDate" class="text-danger"></span>
+        </div>
+
+        <div class="btn-group">
+            <button type="submit" class="btn btn-save">Save Changes</button>
+            <a asp-action="Index" class="btn btn-back">Back to List</a>
+        </div>
+    </form>
+</div>
+

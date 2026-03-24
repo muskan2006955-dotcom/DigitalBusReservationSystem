@@ -1,0 +1,226 @@
+﻿@model BusReservationSystem.Models.Bus
+
+@{
+    ViewData["Title"] = "Add New Bus";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --input-border: #e2e8f0;
+        --input-focus: #764ba2;
+    }
+
+    .form-wrapper {
+        background: #f8fafc;
+        padding: 40px 0;
+        min-height: 100vh;
+    }
+
+    .form-container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: white;
+        padding: 40px;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        border: 1px solid #f1f5f9;
+    }
+
+    .form-header {
+        border-bottom: 2px solid #f1f5f9;
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+    }
+
+        .form-header h2 {
+            color: #1e293b;
+            font-weight: 800;
+            font-size: 24px;
+            letter-spacing: -0.5px;
+        }
+
+        .form-header p {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+        .form-group label {
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-size: 13px;
+            text-transform: uppercase;
+            color: #475569;
+            letter-spacing: 0.5px;
+        }
+
+    .form-control-custom {
+        padding: 12px 16px;
+        border-radius: 8px;
+        border: 1.5px solid var(--input-border);
+        font-size: 15px;
+        color: #1e293b;
+        transition: all 0.3s ease;
+        background-color: #fcfcfc;
+    }
+
+        .form-control-custom:focus {
+            border-color: var(--input-focus);
+            background-color: white;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(118, 75, 162, 0.1);
+        }
+
+    .full-width {
+        grid-column: span 2;
+    }
+
+    .btn-group-custom {
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 2px solid #f1f5f9;
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+    }
+
+    .btn-save {
+        background: #1e293b;
+        color: white;
+        padding: 12px 35px;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+        .btn-save:hover {
+            background: #0f172a;
+            transform: translateY(-1px);
+        }
+
+    .btn-back {
+        text-decoration: none;
+        padding: 12px 25px;
+        border-radius: 8px;
+        background: #f1f5f9;
+        color: #475569;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-back:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+
+    .validation-msg {
+        font-size: 12px;
+        color: #ef4444;
+        margin-top: 4px;
+        font-weight: 500;
+    }
+
+    @@media (max-width: 768px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .full-width {
+            grid-column: span 1;
+        }
+
+        .form-container {
+            padding: 20px;
+            margin: 10px;
+        }
+    }
+</style>
+
+<div class="form-wrapper">
+    <div class="form-container">
+        <div class="form-header">
+            <h2>Add New Bus</h2>
+            <p>Enter vehicle and route details to add a new bus to the fleet.</p>
+        </div>
+
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="validation-msg"></div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label asp-for="BusType">Vehicle Category</label>
+                    <select asp-for="BusType" class="form-control-custom">
+                        <option value="">Select Category</option>
+                        <option>AC Standard</option>
+                        <option>Non-AC Economy</option>
+                        <option>Executive Luxury</option>
+                        <option>Sleeper Class</option>
+                    </select>
+                    <span asp-validation-for="BusType" class="validation-msg"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="TotalSeats">Seating Capacity</label>
+                    <input asp-for="TotalSeats" type="number" class="form-control-custom" placeholder="e.g. 45" />
+                    <span asp-validation-for="TotalSeats" class="validation-msg"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="StartingPoint">Departure City</label>
+                    <input asp-for="StartingPoint" class="form-control-custom" placeholder="Source location" />
+                    <span asp-validation-for="StartingPoint" class="validation-msg"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="DestinationPoint">Arrival City</label>
+                    <input asp-for="DestinationPoint" class="form-control-custom" placeholder="Ending location" />
+                    <span asp-validation-for="DestinationPoint" class="validation-msg"></span>
+                </div>
+
+                <div class="form-group full-width">
+                    <label asp-for="RouteDescription">Route Path & Stops</label>
+                    <textarea asp-for="RouteDescription" class="form-control-custom" style="height: 100px;" placeholder="Describe major stops or highway route..."></textarea>
+                    <span asp-validation-for="RouteDescription" class="validation-msg"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="DepartureTime">Departure Time</label>
+                    <input asp-for="DepartureTime" type="time" class="form-control-custom" />
+                    <span asp-validation-for="DepartureTime" class="validation-msg"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ArrivalTime">Expected Arrival</label>
+                    <input asp-for="ArrivalTime" type="time" class="form-control-custom" />
+                    <span asp-validation-for="ArrivalTime" class="validation-msg"></span>
+                </div>
+
+                <div class="form-group full-width">
+                    <label asp-for="DistanceInKm">Total Distance (Kilometers)</label>
+                    <input asp-for="DistanceInKm" type="number" class="form-control-custom" placeholder="Distance in KM" />
+                    <span asp-validation-for="DistanceInKm" class="validation-msg"></span>
+                </div>
+            </div>
+
+            <div class="btn-group-custom">
+                <a asp-action="ViewBus" class="btn-back">Cancel</a>
+                <button type="submit" class="btn-save">Register Bus</button>
+            </div>
+        </form>
+    </div>
+</div>
