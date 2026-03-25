@@ -1,0 +1,159 @@
+﻿@model IEnumerable<BusReservationSystem.Models.SystemLog>
+
+@{
+    ViewData["Title"] = "System Audit Logs";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid px-4 mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-0">
+                <i class="fas fa-user-shield text-danger me-2"></i>System Audit Logs
+            </h2>
+            <p class="text-muted small">Monitor administrative activities, security events, and system changes.</p>
+        </div>
+        <form asp-action="PurgeLogs" method="post">
+            <button type="submit" class="btn btn-outline-danger btn-sm shadow-sm" onclick="return confirm('Are you sure you want to delete logs older than 30 days?')">
+                <i class="fas fa-trash-alt me-1"></i> Purge Old Logs
+            </button>
+        </form>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4" style="border-radius: 12px;">
+        <div class="card-body bg-light rounded">
+            <form method="get" asp-action="Index">
+                <div class="row g-3">
+                    <div class="col-md-5">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
+                            <input type="text" name="searchTerm" class="form-control border-start-0" placeholder="Search by Admin Email or Details..." value="@Context.Request.Query["searchTerm"]">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <select name="moduleFilter" class="form-select border-0 shadow-sm">
+                            <option value="">All Modules</option>
+                            @if (ViewBag.Modules != null)
+                            {
+                                foreach (var mod in ViewBag.Modules)
+                                {
+                                    <option value="@mod">@mod</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-grid">
+                        <button type="submit" class="btn btn-primary shadow-sm">
+                            <i class="fas fa-filter me-1"></i> Apply Filters
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-5" style="border-radius: 12px; overflow: hidden;">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-dark text-white">
+                    <tr>
+                        <th class="ps-4 py-3" style="width: 180px;">Date & Time</th>
+                        <th style="width: 200px;">Administrator</th>
+                        <th style="width: 120px;">Action</th>
+                        <th style="width: 130px;">Module</th>
+                        <th>Activity Details</th>
+                        <th class="pe-4 text-end" style="width: 140px;">IP Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var log in Model)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="fw-bold small text-dark">
+                                        @log.Timestamp?.ToString("dd MMM yyyy")
+                                    </div>
+                                    <div class="text-muted x-small" style="font-size: 0.75rem;">
+                                        @log.Timestamp?.ToString("hh:mm:ss tt")
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-primary text-white rounded-circle d-flex justify-content-center align-items-center me-2" style="width: 32px; height: 32px; font-size: 12px; font-weight: bold;">
+                                            @(string.IsNullOrEmpty(log.AdminEmail) ? "S" : log.AdminEmail.Substring(0, 1).ToUpper())
+                                        </div>
+                                        <span class="small fw-bold text-dark">@log.AdminEmail</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    @{
+                                        var actionType = log.Action ?? "Info";
+                                        var badgeClass = actionType.ToLower() switch
+                                        {
+                                            "delete" => "bg-danger",
+                                            "update" => "bg-warning text-dark",
+                                            "insert" => "bg-success",
+                                            "login" => "bg-info text-dark",
+                                            "refund" => "bg-primary",
+                                            _ => "bg-secondary"
+                                        };
+                                    }
+                                    <span class="badge @badgeClass rounded-pill px-3" style="font-size: 0.7rem;">@actionType</span>
+                                </td>
+                                <td>
+                                    <span class="text-uppercase fw-bold text-muted" style="font-size: 0.7rem;">@log.Module</span>
+                                </td>
+                                <td>
+                                    <p class="mb-0 small text-dark text-wrap" style="max-width: 400px;">@log.Details</p>
+                                </td>
+                                <td class="pe-4 text-end">
+                                    <code class="x-small text-muted" style="font-size: 0.75rem;">@log.IpAddress</code>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-5">
+                                <i class="fas fa-history fa-3x text-light mb-3 d-block"></i>
+                                <span class="text-muted">No system logs found for the selected criteria.</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Professional tweaks */
+    .table thead th {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05rem;
+        border: none;
+    }
+
+    .table tbody td {
+        border-bottom: 1px solid #f2f2f2;
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px;
+        font-size: 0.9rem;
+    }
+
+    .card {
+        border: 1px solid rgba(0,0,0,.05);
+    }
+
+    .badge {
+        font-weight: 600;
+    }
+</style>

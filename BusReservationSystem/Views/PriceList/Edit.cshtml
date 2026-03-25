@@ -1,0 +1,175 @@
+﻿@model BusReservationSystem.Models.PriceList
+
+@{
+    ViewData["Title"] = "Modify Pricing";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .form-wrapper {
+        background: #f8fafc;
+        padding: 40px 0;
+        min-height: 90vh;
+    }
+
+    .form-container {
+        max-width: 650px;
+        margin: 0 auto;
+        background: white;
+        padding: 40px;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        border: 1px solid #f1f5f9;
+    }
+
+    .form-header {
+        border-bottom: 2px solid #f1f5f9;
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+    }
+
+        .form-header h2 {
+            color: #1e293b;
+            font-weight: 800;
+            font-size: 22px;
+            letter-spacing: -0.5px;
+            margin-bottom: 5px;
+        }
+
+        .form-header p {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+    .form-group {
+        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .form-group label {
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #475569;
+            letter-spacing: 0.5px;
+        }
+
+    .form-control-custom {
+        padding: 12px 16px;
+        border-radius: 8px;
+        border: 1.5px solid #e2e8f0;
+        font-size: 15px;
+        color: #1e293b;
+        transition: all 0.3s ease;
+        background-color: #fcfcfc;
+    }
+
+        .form-control-custom:focus {
+            border-color: #3b82f6;
+            background-color: white;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+    /* Readonly field style */
+    .form-control-readonly {
+        background-color: #f1f5f9;
+        cursor: not-allowed;
+        border-color: #e2e8f0;
+        font-weight: 600;
+        color: #64748b;
+    }
+
+    .btn-group-custom {
+        margin-top: 35px;
+        padding-top: 20px;
+        border-top: 2px solid #f1f5f9;
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+    }
+
+    .btn-save-price {
+        background: #3b82f6;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+        .btn-save-price:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+    .btn-cancel {
+        text-decoration: none;
+        padding: 12px 25px;
+        border-radius: 8px;
+        background: #f1f5f9;
+        color: #475569;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-cancel:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+
+    .validation-msg {
+        font-size: 12px;
+        color: #ef4444;
+        margin-top: 4px;
+        font-weight: 500;
+    }
+</style>
+
+<div class="form-wrapper">
+    <div class="form-container">
+        <div class="form-header">
+            <h2>Update Pricing</h2>
+            <p>Modify ticket rates and tax configurations for <strong>@Model.BusType</strong>.</p>
+        </div>
+
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="PriceId" />
+
+            <div class="form-group">
+                <label asp-for="BusType">Bus Category</label>
+                <input class="form-control-custom form-control-readonly" asp-for="BusType" readonly />
+            </div>
+
+            <div class="form-group">
+                <label asp-for="PricePerKm">Price Per Kilometer</label>
+                <div style="position: relative;">
+                    <input class="form-control-custom w-100" asp-for="PricePerKm" type="number" step="0.01" min="0" required placeholder="0.00" />
+                </div>
+                <span asp-validation-for="PricePerKm" class="validation-msg"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="TaxPercentage">Tax Percentage (%)</label>
+                <input class="form-control-custom" asp-for="TaxPercentage" type="number" step="0.01" min="0" required placeholder="e.g. 5.0" />
+                <span asp-validation-for="TaxPercentage" class="validation-msg"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="EffectiveDate">Effective Date</label>
+                <input class="form-control-custom" asp-for="EffectiveDate" type="date" required />
+                <span asp-validation-for="EffectiveDate" class="validation-msg"></span>
+            </div>
+
+            <div class="btn-group-custom">
+                <a asp-action="Index" class="btn-cancel">Discard</a>
+                <button type="submit" class="btn-save-price">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,79 @@
+﻿@model IEnumerable<BusReservationSystem.Models.Booking>
+
+@{
+    ViewData["Title"] = "Search Ticket";
+    Layout = "~/Views/Shared/_EmployeeLayout.cshtml";
+
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">🔍 Search Booking / Find Ticket</h2>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form asp-action="Search" method="get" class="row g-3">
+                <div class="col-md-9">
+                    <input type="text" name="searchTerm"
+                           value="@Context.Request.Query["searchTerm"]"
+                           class="form-control form-control-lg"
+                           placeholder="Enter Booking ID, ID Proof, or Phone Number...">
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        Find Records
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <hr />
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered shadow-sm">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Customer Name</th>
+                        <th>ID Proof</th>
+                        <th>Bus Number</th>
+                        <th>Route</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td><strong>@item.BookingId</strong></td>
+                            <td>@(item.Customer?.CustomerName ?? "N/A")</td>
+                            <td>@(item.Customer?.IdproofNumber ?? "N/A")</td>
+                            <td>@(item.Bus?.BusNumber ?? "N/A")</td>
+                            <td>
+                                <small>@item.StartingPoint ➔ @item.DestinationPoint</small>
+                            </td>
+                            <td>
+                                <span class="badge @(item.BookingStatus == "Booked" ? "bg-success" : "bg-danger")">
+                                    @item.BookingStatus
+                                </span>
+                            </td>
+                            <td>
+                                <a asp-action="Details" asp-route-id="@item.BookingId" class="btn btn-info btn-sm">Details</a>
+                                <a asp-action="Edit" asp-route-id="@item.BookingId" class="btn btn-warning btn-sm">Edit</a>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center mt-4">
+            <h5>🚫 No Records Found</h5>
+            <p>Make sure the ID or Phone Number is correct and exists in the system.</p>
+        </div>
+    }
+</div>

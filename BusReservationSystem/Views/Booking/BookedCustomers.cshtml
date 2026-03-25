@@ -1,0 +1,172 @@
+﻿@model IEnumerable<BusReservationSystem.Models.Booking>
+
+@{
+    ViewData["Title"] = "Active Booked Customers";
+    Layout = "~/Views/Shared/_EmployeeLayout.cshtml";
+}
+
+<style>
+    .glass-card {
+        border-radius: 12px;
+        border: none;
+        background: #ffffff;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .filter-section {
+        background: #f8fafc;
+        padding: 15px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .table thead th {
+        background-color: #f1f5f9;
+        color: #475569;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 10px;
+        letter-spacing: 0.5px;
+        padding: 12px;
+    }
+
+    /* --- NEW SOLID TEXT BUTTONS --- */
+    .action-btn {
+        padding: 5px 12px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 11px;
+        font-weight: 600;
+        margin: 0 2px;
+        color: white !important;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        border: none;
+        transition: 0.3s;
+    }
+
+    .btn-edit {
+        background: #3498db;
+    }
+    /* Blue */
+    .btn-view {
+        background: #9b59b6;
+    }
+    /* Purple */
+    .btn-cancel {
+        background: #e74c3c;
+    }
+    /* Red */
+
+    .action-btn:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
+
+    .route-badge {
+        background: #eef2ff;
+        color: #4338ca;
+        padding: 3px 8px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 11px;
+    }
+
+    .status-active {
+        background: #dcfce7;
+        color: #15803d;
+        font-size: 10px;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-weight: bold;
+    }
+</style>
+
+<div class="container-fluid px-4 mt-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h4 class="fw-bold text-dark mb-0">Booked Customers</h4>
+            <p class="text-muted small mb-0">Active passengers list & management</p>
+        </div>
+        <span class="badge bg-primary px-3 py-2 shadow-sm">Count: @Model.Count()</span>
+    </div>
+
+    <div class="glass-card filter-section mb-3">
+        <form method="get" asp-action="BookedCustomers" class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <label class="small fw-bold text-muted">Search</label>
+                <input type="text" name="searchTerm" class="form-control form-control-sm shadow-none"
+                       placeholder="Name/Phone/CNIC" value="@Context.Request.Query["searchTerm"]">
+            </div>
+            <div class="col-md-3">
+                <label class="small fw-bold text-muted">Travel Date</label>
+                <input type="date" name="travelDate" class="form-control form-control-sm shadow-none"
+                       value="@Context.Request.Query["travelDate"]">
+            </div>
+            <div class="col-md-5 d-flex gap-1">
+                <button type="submit" class="btn btn-primary btn-sm px-3 flex-grow-1">Filter</button>
+                <a asp-action="BookedCustomers" class="btn btn-outline-secondary btn-sm px-3">Reset</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="glass-card overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Passenger</th>
+                        <th>Bus/Seat</th>
+                        <th>Route</th>
+                        <th>Date</th>
+                        <th>Fare</th>
+                        <th>Status</th>
+                        <th class="text-center" style="min-width: 230px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="fw-bold text-dark small">@item.Customer?.CustomerName</div>
+                                <div class="text-muted" style="font-size: 11px;">@item.Customer?.IdproofNumber</div>
+                            </td>
+                            <td>
+                                <div class="small fw-bold">@item.Bus?.BusNumber</div>
+                                <span class="badge bg-light text-dark border small" style="font-size: 10px;">Seat @item.SeatNumber</span>
+                            </td>
+                            <td>
+                                <div class="route-badge text-truncate" style="max-width: 150px;">
+                                    @item.StartingPoint <i class="fa fa-arrow-right mx-1" style="font-size: 8px;"></i> @item.DestinationPoint
+                                </div>
+                            </td>
+                            <td class="small">@item.TravelDate.ToString("dd MMM, yyyy")</td>
+                            <td class="fw-bold text-primary small">Rs @item.FinalAmount?.ToString("N0")</td>
+                            <td>
+                                <span class="status-active">@item.BookingStatus</span>
+                            </td>
+                            <td class="text-center">
+                                <a asp-action="Details" asp-route-id="@item.BookingId" class="action-btn btn-view">
+                                    <i class="fa fa-eye"></i> View
+                                </a>
+
+                                <a asp-action="Edit" asp-route-id="@item.BookingId" class="action-btn btn-edit">
+                                    <i class="fa fa-edit"></i> Edit
+                                </a>
+
+                                <form asp-action="Cancel" asp-route-id="@item.BookingId" method="post"
+                                      onsubmit="return confirm('Cancel this booking?');" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="action-btn btn-cancel">
+                                        <i class="fa fa-times"></i> Cancel
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
