@@ -1,0 +1,5 @@
+*.cshtml linguist-language=csharp
+*.cs linguist-language=csharp
+*.css linguist-vendored=true
+*.js linguist-vendored=true
+*.html linguist-vendored=true
