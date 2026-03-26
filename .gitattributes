@@ -1,5 +1,12 @@
+<<<<<<< HEAD
 *.cshtml linguist-language=csharp
 *.cs linguist-language=csharp
 *.css linguist-vendored=true
 *.js linguist-vendored=true
 *.html linguist-vendored=true
+=======
+*.html linguist-vendored
+*.css linguist-vendored
+*.scss linguist-vendored
+*.js linguist-vendored
+>>>>>>> 4dfd1d50af7d05d18d205398e8ba0af64a948409
